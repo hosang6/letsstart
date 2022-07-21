@@ -1,14 +1,36 @@
 import * as express from 'express';
+import {Cat,CatType} from './app.model';
 
 const app: express.Express = express();
 
-const port: number = 3000;
-
-app.get('/', (req:express.Request, res:express.Response) => {
-    console.log(req);
-    res.send('Hello World!');
+app.use((req, res, next) => {
+    console.log(req.rawHeaders[1]);
+    console.log('this is logging middelware');
+    next();
 });
 
-app.listen(port, () => {
-    console.log(`Example app listening on port ${port}`);
+app.get('/cats/som', (req, res, next) =>{
+    console.log('this is som middelware');
+    next();
+});
+
+app.get('/', (req: express.Request, res: express.Response) =>{
+    res.send({ cats: Cat });
+});
+
+app.get('/cats/blue',(req,res) => {
+    res.send({cats: Cat, blue: Cat[0]});
+});
+
+app.get('/cats/som',(req,res) => {
+    res.send({ som: Cat[1]});
+});
+
+app.use((req,res,next)=>{
+    console.log('this is error middelware');
+    res.send({error: '404 not found error'});
+});
+
+
+app.listen(3000, ()=>{console.log('server is on...');
 });
